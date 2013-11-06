@@ -58,6 +58,18 @@ static const NSInteger kThumbSize = 9;
     
     NSArray *constraints = @[centerXConstraint, centerYConstraint, widthConstraint, heightConstraint];
     [self.view addConstraints:constraints];
+    
+    [self.view layoutSubviews];
+    
+    UIButton *button = [[UIButton alloc] initWithFrame:CGRectMake(0, 0, 200, 100)];
+    button.backgroundColor = [UIColor redColor];
+    [button addTarget:self action:@selector(changeValue:) forControlEvents:UIControlEventTouchUpInside];
+    [self.view addSubview:button];
+}
+
+- (void)changeValue:(id)sender {
+    
+    _slider.value = 0.6;
 }
 
 @end

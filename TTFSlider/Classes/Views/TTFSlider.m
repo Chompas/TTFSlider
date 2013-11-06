@@ -20,6 +20,8 @@ static const NSInteger kThumbSize = 30;
 
 @implementation TTFSlider
 
+@synthesize value = _value;
+
 #pragma mark - Private
 
 - (void)updateThumbLabel {
@@ -44,6 +46,21 @@ static const NSInteger kThumbSize = 30;
     
 
     
+}
+
+- (void)updateThumbWithValue:(float)value {
+    
+    NSString *valueString = [NSString stringWithFormat:@"%0.2f", value];
+    _thumbLabel.text = valueString;
+    
+    float delta = (value / (_sliderMaxValue - _sliderMinValue)) * self.frame.size.width;
+    
+    //  Move the thumbView using delta
+    CGRect thumbRect = _thumbView.frame;
+    thumbRect.origin.x = delta-kThumbSize/2;
+    thumbRect.origin.x = MAX(-kThumbSize/2, thumbRect.origin.x);
+    thumbRect.origin.x = MIN(self.frame.size.width - kThumbSize/2, thumbRect.origin.x);
+    _thumbView.frame = thumbRect;
 }
 
 - (float)calculateAnimationThumbDelta {
@@ -240,6 +257,18 @@ static const NSInteger kThumbSize = 30;
 -(void)layoutSubviews{
     [super layoutSubviews];
     [self updateThumbViewMask];
+}
+
+#pragma mark - Properties
+
+- (float)value {
+    return _value;
+}
+
+- (void)setValue:(float)newValue {
+    _value = newValue;
+    
+    [self updateThumbWithValue:_value];
 }
 
 #pragma mark - Public
