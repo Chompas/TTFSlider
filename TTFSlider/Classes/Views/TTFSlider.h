@@ -10,6 +10,9 @@
 #import <QuartzCore/QuartzCore.h>
 
 @interface TTFSlider : UIView{
+    UIView *_backgroundView;
+    UIView *_minView;
+    
     UIView *_thumbView;
     UILabel *_thumbLabel;
     
