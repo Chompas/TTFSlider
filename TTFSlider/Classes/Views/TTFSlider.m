@@ -7,6 +7,7 @@
 //
 
 #import "TTFSlider.h"
+#import "QuartzCore/QuartzCore.h"
 
 static const NSInteger kThumbSize = 30;
 
@@ -204,6 +205,12 @@ static const NSInteger kThumbSize = 30;
 
     //  Basic Init
     _thumbView = [[UIView alloc] initWithFrame:CGRectZero];
+    
+    _thumbView.layer.cornerRadius = kThumbSize/2;
+    _thumbView.layer.borderColor = [UIColor whiteColor].CGColor;
+    _thumbView.layer.borderWidth = 2.0;
+    
+    //Adding
     [_thumbView setTranslatesAutoresizingMaskIntoConstraints:NO];
     [self addSubview:_thumbView];
     
