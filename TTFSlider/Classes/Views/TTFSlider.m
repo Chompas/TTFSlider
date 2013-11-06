@@ -24,7 +24,8 @@ static const NSInteger kSliderWidth = 40;
 
 -(void)handleThumbPanGesture:(UIPanGestureRecognizer *)recognizer{
     if (recognizer.state == UIGestureRecognizerStateBegan){
-        NSLog(@"began");
+        //  Began
+        
     }else if (recognizer.state == UIGestureRecognizerStateChanged){
 
         CGPoint delta = [recognizer translationInView:self];
@@ -41,8 +42,8 @@ static const NSInteger kSliderWidth = 40;
         
     }else if (recognizer.state == UIGestureRecognizerStateEnded){
         
+        //  Calculate the value for the slider, from 0 to 1
         _value = (_thumbView.frame.origin.x + kSliderWidth/2) / self.frame.size.width;
-        NSLog(@"#DEBUG ended %.3f", _value);
     }
 }
 
@@ -122,6 +123,17 @@ static const NSInteger kSliderWidth = 40;
         [self setup];
     }
     return self;
+}
+
+- (BOOL)pointInside:(CGPoint)point withEvent:(UIEvent *)event{
+    //  This catches every touch on _thumbView :-)
+    BOOL retVal = NO;
+    
+    if (CGRectContainsPoint(_thumbView.frame, point)){
+        retVal = YES;
+    }
+    
+    return retVal;
 }
 
 @end
