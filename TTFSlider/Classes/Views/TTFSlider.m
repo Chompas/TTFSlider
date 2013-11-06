@@ -13,6 +13,8 @@ static const NSInteger kThumbSize = 30;
 @interface TTFSlider()
 -(void)setup;
 -(void)setupThumbView;
+-(void)setupMinView;
+-(void)setupBackgroundView;
 -(void)updateThumbViewMask;
 
 -(void)handleThumbPanGesture:(UIPanGestureRecognizer *)recognizer;
@@ -24,6 +26,94 @@ static const NSInteger kThumbSize = 30;
 
 #pragma mark - Private
 
+-(void)setupBackgroundView{
+    _backgroundView = [[UIView alloc] initWithFrame:CGRectZero];
+    [_backgroundView setTranslatesAutoresizingMaskIntoConstraints:NO];
+    [self addSubview:_backgroundView];
+    
+    NSLayoutConstraint *leftConstraint = [NSLayoutConstraint constraintWithItem:_backgroundView
+                                                                      attribute:NSLayoutAttributeLeft
+                                                                      relatedBy:NSLayoutRelationEqual
+                                                                         toItem:self
+                                                                      attribute:NSLayoutAttributeLeft
+                                                                     multiplier:1.0
+                                                                       constant:0];
+    
+    NSLayoutConstraint *rightConstraint = [NSLayoutConstraint constraintWithItem:_backgroundView
+                                                                       attribute:NSLayoutAttributeRight
+                                                                       relatedBy:NSLayoutRelationEqual
+                                                                          toItem:self
+                                                                       attribute:NSLayoutAttributeRight
+                                                                      multiplier:1.0
+                                                                        constant:0];
+    
+    NSLayoutConstraint *topConstraint = [NSLayoutConstraint constraintWithItem:_backgroundView
+                                                                     attribute:NSLayoutAttributeTop
+                                                                     relatedBy:NSLayoutRelationEqual
+                                                                        toItem:self
+                                                                     attribute:NSLayoutAttributeTop
+                                                                    multiplier:1.0
+                                                                      constant:0];
+    
+    NSLayoutConstraint *bottomConstraint = [NSLayoutConstraint constraintWithItem:_backgroundView
+                                                                        attribute:NSLayoutAttributeBottom
+                                                                        relatedBy:NSLayoutRelationEqual
+                                                                           toItem:self
+                                                                        attribute:NSLayoutAttributeBottom
+                                                                       multiplier:1.0
+                                                                         constant:0];
+    
+    NSArray *constraints = @[leftConstraint, rightConstraint, topConstraint, bottomConstraint];
+    [self addConstraints:constraints];
+    
+    _backgroundView.backgroundColor = [UIColor colorWithRed:232/255.0 green:232/255.0 blue:232/255.0 alpha:1.0];
+    _backgroundView.clipsToBounds = YES;
+    _backgroundView.layer.cornerRadius = 4;
+}
+
+-(void)setupMinView{
+    _minView = [[UIView alloc] initWithFrame:CGRectZero];
+    [_minView setTranslatesAutoresizingMaskIntoConstraints:NO];
+    [_backgroundView addSubview:_minView];
+    
+    NSLayoutConstraint *widthConstraint = [NSLayoutConstraint constraintWithItem:_minView
+                                                                       attribute:NSLayoutAttributeWidth
+                                                                       relatedBy:NSLayoutRelationEqual
+                                                                          toItem:_backgroundView
+                                                                       attribute:NSLayoutAttributeWidth
+                                                                      multiplier:1.0
+                                                                        constant:0];
+    
+    NSLayoutConstraint *rightConstraint = [NSLayoutConstraint constraintWithItem:_minView
+                                                                       attribute:NSLayoutAttributeRight
+                                                                       relatedBy:NSLayoutRelationEqual
+                                                                          toItem:_thumbView
+                                                                       attribute:NSLayoutAttributeLeft
+                                                                      multiplier:1.0
+                                                                        constant:kThumbSize/2];
+    
+    NSLayoutConstraint *topConstraint = [NSLayoutConstraint constraintWithItem:_minView
+                                                                     attribute:NSLayoutAttributeTop
+                                                                     relatedBy:NSLayoutRelationEqual
+                                                                        toItem:_backgroundView
+                                                                     attribute:NSLayoutAttributeTop
+                                                                    multiplier:1.0
+                                                                      constant:0];
+    
+    NSLayoutConstraint *bottomConstraint = [NSLayoutConstraint constraintWithItem:_minView
+                                                                        attribute:NSLayoutAttributeBottom
+                                                                        relatedBy:NSLayoutRelationEqual
+                                                                           toItem:_backgroundView
+                                                                        attribute:NSLayoutAttributeBottom
+                                                                       multiplier:1.0
+                                                                         constant:0];
+    
+    NSArray *constraints = @[widthConstraint, rightConstraint, topConstraint, bottomConstraint];
+    [self addConstraints:constraints];
+    
+    _minView.backgroundColor = [UIColor colorWithRed:40/255.0 green:145/255.0 blue:171/255.0 alpha:1.0];
+}
+    
 - (void)updateThumbLabel {
     
     //  Calculate the value for the slider, from 0 to 1
@@ -43,9 +133,6 @@ static const NSInteger kThumbSize = 30;
         NSString *valueString = [NSString stringWithFormat:@"%0.2f", _value];
         _thumbLabel.text = valueString;
     }
-    
-
-    
 }
 
 - (void)updateThumbWithValue:(float)value {
@@ -108,13 +195,17 @@ static const NSInteger kThumbSize = 30;
         thumbRect.origin.x = MIN(self.frame.size.width - kThumbSize/2, thumbRect.origin.x);
         _thumbView.frame = thumbRect;
         
+        CGRect minViewRect = _minView.frame;
+        minViewRect.origin.x = _thumbView.frame.origin.x - self.frame.size.width + kThumbSize/2;
+        _minView.frame = minViewRect;
+        
         //  Setting to zero the translation on the center view (otherwise it breaks)
         [recognizer setTranslation:CGPointMake(0, 0) inView:self];
         
         [self updateThumbLabel];
         
     }else if (recognizer.state == UIGestureRecognizerStateEnded){
-        
+    
         if (_sliderSteps > 0) {
         
             float animationDelta = [self calculateAnimationThumbDelta];
@@ -124,11 +215,15 @@ static const NSInteger kThumbSize = 30;
             thumbRect.origin.x = MAX(-kThumbSize/2, thumbRect.origin.x);
             thumbRect.origin.x = MIN(self.frame.size.width - kThumbSize/2, thumbRect.origin.x);
             
+            CGRect minViewRect = _minView.frame;
+            minViewRect.origin.x = thumbRect.origin.x - self.frame.size.width + kThumbSize/2;
+            
             [UIView animateWithDuration:0.2f
                                   delay:0.0f
                                 options:UIViewAnimationOptionCurveEaseInOut
                              animations:^{
                                  [_thumbView setFrame:thumbRect];
+                                 [_minView setFrame:minViewRect];
                              }
                              completion:nil];
         }
@@ -249,9 +344,9 @@ static const NSInteger kThumbSize = 30;
 }
 
 -(void)setup{
-    self.backgroundColor = [UIColor colorWithRed:232/255.0 green:232/255.0 blue:232/255.0 alpha:1.0];
-    self.layer.cornerRadius = 4;
+    [self setupBackgroundView];
     [self setupThumbView];
+    [self setupMinView];
 }
 
 -(void)layoutSubviews{
