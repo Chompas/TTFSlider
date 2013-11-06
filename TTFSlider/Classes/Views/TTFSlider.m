@@ -76,41 +76,6 @@ static const NSInteger kThumbSize = 30;
     [_minView setTranslatesAutoresizingMaskIntoConstraints:NO];
     [_backgroundView addSubview:_minView];
     
-    NSLayoutConstraint *widthConstraint = [NSLayoutConstraint constraintWithItem:_minView
-                                                                       attribute:NSLayoutAttributeWidth
-                                                                       relatedBy:NSLayoutRelationEqual
-                                                                          toItem:_backgroundView
-                                                                       attribute:NSLayoutAttributeWidth
-                                                                      multiplier:1.0
-                                                                        constant:0];
-    
-    NSLayoutConstraint *rightConstraint = [NSLayoutConstraint constraintWithItem:_minView
-                                                                       attribute:NSLayoutAttributeRight
-                                                                       relatedBy:NSLayoutRelationEqual
-                                                                          toItem:_thumbView
-                                                                       attribute:NSLayoutAttributeLeft
-                                                                      multiplier:1.0
-                                                                        constant:kThumbSize/2];
-    
-    NSLayoutConstraint *topConstraint = [NSLayoutConstraint constraintWithItem:_minView
-                                                                     attribute:NSLayoutAttributeTop
-                                                                     relatedBy:NSLayoutRelationEqual
-                                                                        toItem:_backgroundView
-                                                                     attribute:NSLayoutAttributeTop
-                                                                    multiplier:1.0
-                                                                      constant:0];
-    
-    NSLayoutConstraint *bottomConstraint = [NSLayoutConstraint constraintWithItem:_minView
-                                                                        attribute:NSLayoutAttributeBottom
-                                                                        relatedBy:NSLayoutRelationEqual
-                                                                           toItem:_backgroundView
-                                                                        attribute:NSLayoutAttributeBottom
-                                                                       multiplier:1.0
-                                                                         constant:0];
-    
-    NSArray *constraints = @[widthConstraint, rightConstraint, topConstraint, bottomConstraint];
-    [self addConstraints:constraints];
-    
     _minView.backgroundColor = [UIColor colorWithRed:40/255.0 green:145/255.0 blue:171/255.0 alpha:1.0];
 }
     
@@ -148,6 +113,11 @@ static const NSInteger kThumbSize = 30;
     thumbRect.origin.x = MAX(-kThumbSize/2, thumbRect.origin.x);
     thumbRect.origin.x = MIN(self.frame.size.width - kThumbSize/2, thumbRect.origin.x);
     _thumbView.frame = thumbRect;
+    
+    // Move the minView just next to the thumb
+    CGRect minViewRect = _backgroundView.frame;
+    minViewRect.origin.x = thumbRect.origin.x - self.frame.size.width + kThumbSize/2;
+    _minView.frame = minViewRect;
 }
 
 - (float)calculateAnimationThumbDelta {
@@ -345,13 +315,8 @@ static const NSInteger kThumbSize = 30;
 
 -(void)setup{
     [self setupBackgroundView];
-    [self setupThumbView];
     [self setupMinView];
-}
-
--(void)layoutSubviews{
-    [super layoutSubviews];
-    [self updateThumbViewMask];
+    [self setupThumbView];
 }
 
 #pragma mark - Properties
@@ -393,6 +358,13 @@ static const NSInteger kThumbSize = 30;
     }
     
     return retVal;
+}
+
+-(void)layoutSubviews{
+    [super layoutSubviews];
+    [self updateThumbViewMask];
+    
+    [self updateThumbWithValue:_value];
 }
 
 @end
