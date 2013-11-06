@@ -349,12 +349,14 @@ static const NSInteger kThumbSize = 30;
     return self;
 }
 
-- (BOOL)pointInside:(CGPoint)point withEvent:(UIEvent *)event{
-    //  This catches every touch on _thumbView :-)
-    BOOL retVal = NO;
+-(UIView *)hitTest:(CGPoint)point withEvent:(UIEvent *)event{
     
-    if (CGRectContainsPoint(_thumbView.frame, point)){
-        retVal = YES;
+    UIView *retVal = [super hitTest:point withEvent:event];
+    
+    CGRect touchRect = CGRectInset(_thumbView.frame, -20, -20);
+    
+    if (CGRectContainsPoint(touchRect, point)){
+        retVal = _thumbView;
     }
     
     return retVal;
