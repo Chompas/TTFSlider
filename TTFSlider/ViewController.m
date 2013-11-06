@@ -9,7 +9,7 @@
 #import "ViewController.h"
 
 static const NSInteger kSliderWidth = 280;
-static const NSInteger kSliderHeight = 30;
+static const NSInteger kThumbSize = 9;
 
 @interface ViewController ()
 
@@ -54,7 +54,7 @@ static const NSInteger kSliderHeight = 30;
                                                                            toItem:nil
                                                                         attribute:NSLayoutAttributeNotAnAttribute
                                                                        multiplier:1.0
-                                                                         constant:kSliderHeight];
+                                                                         constant:kThumbSize];
     
     NSArray *constraints = @[centerXConstraint, centerYConstraint, widthConstraint, heightConstraint];
     [self.view addConstraints:constraints];

@@ -8,11 +8,10 @@
 
 #import "TTFSlider.h"
 
-static const NSInteger kSliderHeight = 40;
-static const NSInteger kSliderWidth = 40;
 static const NSInteger kSliderSteps = 5;
 static const NSInteger kSliderMax = 90;
 static const NSInteger kSliderMin = 10;
+static const NSInteger kThumbSize = 30;
 
 @interface TTFSlider()
 -(void)setup;
@@ -55,8 +54,8 @@ static const NSInteger kSliderMin = 10;
         //  Move the thumbView using delta
         CGRect thumbRect = _thumbView.frame;
         thumbRect.origin.x += delta.x;
-        thumbRect.origin.x = MAX(-kSliderWidth/2, thumbRect.origin.x);
-        thumbRect.origin.x = MIN(self.frame.size.width - kSliderWidth/2, thumbRect.origin.x);
+        thumbRect.origin.x = MAX(-kThumbSize/2, thumbRect.origin.x);
+        thumbRect.origin.x = MIN(self.frame.size.width - kThumbSize/2, thumbRect.origin.x);
         _thumbView.frame = thumbRect;
         
         //  Setting to zero the translation on the center view (otherwise it breaks)
@@ -64,7 +63,7 @@ static const NSInteger kSliderMin = 10;
         
         //Getting discrete step
         float gap = 1.00/(kSliderSteps - 1);
-        _value = (_thumbView.frame.origin.x + kSliderWidth/2) / self.frame.size.width;
+        _value = (_thumbView.frame.origin.x + kThumbSize/2) / self.frame.size.width;
         int discreteValue = ((_value + (gap/2)) / gap);
         NSString *valueString = [NSString stringWithFormat:@"%i", discreteValue];
         _thumbLabel.text = valueString;
@@ -72,15 +71,15 @@ static const NSInteger kSliderMin = 10;
     }else if (recognizer.state == UIGestureRecognizerStateEnded){
         
         //  Calculate the value for the slider, from 0 to 1
-        _value = (_thumbView.frame.origin.x + kSliderWidth/2) / self.frame.size.width;
+        _value = (_thumbView.frame.origin.x + kThumbSize/2) / self.frame.size.width;
         
         //Getting discrete step
         float gap = 1.00/(kSliderSteps - 1);
         int discreteValue = ((_value + (gap/2)) / gap);
         CGRect thumbRect = _thumbView.frame;
-        thumbRect.origin.x = (discreteValue * gap * self.frame.size.width) - kSliderWidth/2;
-        thumbRect.origin.x = MAX(-kSliderWidth/2, thumbRect.origin.x);
-        thumbRect.origin.x = MIN(self.frame.size.width - kSliderWidth/2, thumbRect.origin.x);
+        thumbRect.origin.x = (discreteValue * gap * self.frame.size.width) - kThumbSize/2;
+        thumbRect.origin.x = MAX(-kThumbSize/2, thumbRect.origin.x);
+        thumbRect.origin.x = MIN(self.frame.size.width - kThumbSize/2, thumbRect.origin.x);
         
         [UIView animateWithDuration:0.2f
                               delay:0.0f
@@ -126,7 +125,7 @@ static const NSInteger kSliderMin = 10;
                                                                                     toItem:nil
                                                                                  attribute:NSLayoutAttributeNotAnAttribute
                                                                                 multiplier:1.0
-                                                                                  constant:kSliderHeight];
+                                                                                  constant:kThumbSize];
     
     NSLayoutConstraint *thumbViewWidthConstraint = [NSLayoutConstraint constraintWithItem:_thumbView
                                                                                 attribute:NSLayoutAttributeWidth
@@ -134,7 +133,7 @@ static const NSInteger kSliderMin = 10;
                                                                                    toItem:nil
                                                                                 attribute:NSLayoutAttributeNotAnAttribute
                                                                                multiplier:1.0
-                                                                                 constant:kSliderWidth];
+                                                                                 constant:kThumbSize];
     
     NSArray *thumbViewConstraints = @[thumbViewCenterXConstraint,
                                       thumbViewCenterYConstraint,
@@ -145,7 +144,7 @@ static const NSInteger kSliderMin = 10;
     
     
     //  Style
-    _thumbView.backgroundColor = [UIColor redColor];
+    _thumbView.backgroundColor = [UIColor colorWithRed:12/255.0 green:99/255.0 blue:121/255.0 alpha:1.0];
     
     
     //  Label init
@@ -195,7 +194,7 @@ static const NSInteger kSliderMin = 10;
     [_thumbView addConstraints:thumbLabelConstraints];
     _thumbLabel.textAlignment = NSTextAlignmentCenter;
     _thumbLabel.textColor = [UIColor whiteColor];
-    _thumbLabel.font = [UIFont fontWithName:@"HelveticaNeue-Medium" size:18];
+    _thumbLabel.font = [UIFont fontWithName:@"HelveticaNeue-Medium" size:12];
     
     //  Gesture handlers
     UIPanGestureRecognizer *thumbPanRecognizer = [[UIPanGestureRecognizer alloc] initWithTarget:self action:@selector(handleThumbPanGesture:)];
@@ -203,8 +202,8 @@ static const NSInteger kSliderMin = 10;
 }
 
 -(void)setup{
-    self.backgroundColor = [UIColor greenColor];
-
+    self.backgroundColor = [UIColor colorWithRed:232/255.0 green:232/255.0 blue:232/255.0 alpha:1.0];
+    self.layer.cornerRadius = 4;
     [self setupThumbView];
 }
 
