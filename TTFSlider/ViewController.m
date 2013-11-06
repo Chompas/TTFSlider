@@ -8,22 +8,56 @@
 
 #import "ViewController.h"
 
+static const NSInteger kSliderWidth = 280;
+static const NSInteger kSliderHeight = 30;
+
 @interface ViewController ()
 
 @end
 
 @implementation ViewController
 
-- (void)viewDidLoad
-{
+- (void)viewDidLoad{
     [super viewDidLoad];
-	// Do any additional setup after loading the view, typically from a nib.
-}
-
-- (void)didReceiveMemoryWarning
-{
-    [super didReceiveMemoryWarning];
-    // Dispose of any resources that can be recreated.
+    
+    _slider = [[TTFSlider alloc] initWithFrame:CGRectZero];
+    [_slider setTranslatesAutoresizingMaskIntoConstraints:NO];
+    [self.view addSubview:_slider];
+    
+    NSLayoutConstraint *centerXConstraint = [NSLayoutConstraint constraintWithItem:_slider
+                                                                         attribute:NSLayoutAttributeCenterX
+                                                                         relatedBy:NSLayoutRelationEqual
+                                                                            toItem:self.view
+                                                                         attribute:NSLayoutAttributeCenterX
+                                                                        multiplier:1.0
+                                                                          constant:0];
+    
+    NSLayoutConstraint *centerYConstraint = [NSLayoutConstraint constraintWithItem:_slider
+                                                                         attribute:NSLayoutAttributeCenterY
+                                                                         relatedBy:NSLayoutRelationEqual
+                                                                            toItem:self.view
+                                                                         attribute:NSLayoutAttributeCenterY
+                                                                        multiplier:1.0
+                                                                          constant:0];
+    
+    NSLayoutConstraint *widthConstraint = [NSLayoutConstraint constraintWithItem:_slider
+                                                                       attribute:NSLayoutAttributeWidth
+                                                                       relatedBy:NSLayoutRelationEqual
+                                                                          toItem:nil
+                                                                       attribute:NSLayoutAttributeNotAnAttribute
+                                                                      multiplier:1.0
+                                                                        constant:kSliderWidth];
+    
+    NSLayoutConstraint *heightConstraint = [NSLayoutConstraint constraintWithItem:_slider
+                                                                        attribute:NSLayoutAttributeHeight
+                                                                        relatedBy:NSLayoutRelationEqual
+                                                                           toItem:nil
+                                                                        attribute:NSLayoutAttributeNotAnAttribute
+                                                                       multiplier:1.0
+                                                                         constant:kSliderHeight];
+    
+    NSArray *constraints = @[centerXConstraint, centerYConstraint, widthConstraint, heightConstraint];
+    [self.view addConstraints:constraints];
 }
 
 @end

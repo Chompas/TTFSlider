@@ -21,6 +21,7 @@
 		67A8388D182A990E00858417 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 67A8386F182A990E00858417 /* UIKit.framework */; };
 		67A83895182A990E00858417 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 67A83893182A990E00858417 /* InfoPlist.strings */; };
 		67A83897182A990E00858417 /* TTFSliderTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 67A83896182A990E00858417 /* TTFSliderTests.m */; };
+		67A838A2182A993200858417 /* TTFSlider.m in Sources */ = {isa = PBXBuildFile; fileRef = 67A838A1182A993200858417 /* TTFSlider.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -53,6 +54,8 @@
 		67A83892182A990E00858417 /* TTFSliderTests-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "TTFSliderTests-Info.plist"; sourceTree = "<group>"; };
 		67A83894182A990E00858417 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		67A83896182A990E00858417 /* TTFSliderTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = TTFSliderTests.m; sourceTree = "<group>"; };
+		67A838A0182A993200858417 /* TTFSlider.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TTFSlider.h; path = Classes/Views/TTFSlider.h; sourceTree = "<group>"; };
+		67A838A1182A993200858417 /* TTFSlider.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = TTFSlider.m; path = Classes/Views/TTFSlider.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -114,11 +117,12 @@
 			children = (
 				67A8387A182A990E00858417 /* AppDelegate.h */,
 				67A8387B182A990E00858417 /* AppDelegate.m */,
+				67A838A3182A993600858417 /* Classes */,
+				67A83883182A990E00858417 /* Images.xcassets */,
 				67A8387D182A990E00858417 /* Main.storyboard */,
+				67A83872182A990E00858417 /* Supporting Files */,
 				67A83880182A990E00858417 /* ViewController.h */,
 				67A83881182A990E00858417 /* ViewController.m */,
-				67A83883182A990E00858417 /* Images.xcassets */,
-				67A83872182A990E00858417 /* Supporting Files */,
 			);
 			path = TTFSlider;
 			sourceTree = "<group>";
@@ -150,6 +154,23 @@
 				67A83893182A990E00858417 /* InfoPlist.strings */,
 			);
 			name = "Supporting Files";
+			sourceTree = "<group>";
+		};
+		67A838A3182A993600858417 /* Classes */ = {
+			isa = PBXGroup;
+			children = (
+				67A838A4182A993B00858417 /* Views */,
+			);
+			name = Classes;
+			sourceTree = "<group>";
+		};
+		67A838A4182A993B00858417 /* Views */ = {
+			isa = PBXGroup;
+			children = (
+				67A838A0182A993200858417 /* TTFSlider.h */,
+				67A838A1182A993200858417 /* TTFSlider.m */,
+			);
+			name = Views;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -252,6 +273,7 @@
 				67A83882182A990E00858417 /* ViewController.m in Sources */,
 				67A8387C182A990E00858417 /* AppDelegate.m in Sources */,
 				67A83878182A990E00858417 /* main.m in Sources */,
+				67A838A2182A993200858417 /* TTFSlider.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

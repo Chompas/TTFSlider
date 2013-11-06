@@ -1,5 +1,5 @@
 //
-//  ViewController.h
+//  TTFSlider.h
 //  TTFSlider
 //
 //  Created by Ezequiel A Becerra on 11/6/13.
@@ -7,10 +7,11 @@
 //
 
 #import <UIKit/UIKit.h>
-#import "TTFSlider.h"
 
-@interface ViewController : UIViewController{
-    TTFSlider *_slider;
+@interface TTFSlider : UIView{
+    UIView *_thumbView;
 }
+
+@property (assign) float value;
 
 @end
