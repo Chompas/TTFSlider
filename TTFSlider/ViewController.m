@@ -21,6 +21,10 @@ static const NSInteger kThumbSize = 9;
     [super viewDidLoad];
     
     _slider = [[TTFSlider alloc] initWithFrame:CGRectZero];
+    _slider.sliderMinValue = 0;
+    _slider.sliderMaxValue = 5;
+    _slider.sliderSteps = 5;
+    
     [_slider setTranslatesAutoresizingMaskIntoConstraints:NO];
     [self.view addSubview:_slider];
     
