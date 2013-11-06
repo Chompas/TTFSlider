@@ -17,6 +17,7 @@ static const NSInteger kSliderMin = 10;
 @interface TTFSlider()
 -(void)setup;
 -(void)setupThumbView;
+-(void)updateThumbViewMask;
 
 -(void)handleThumbPanGesture:(UIPanGestureRecognizer *)recognizer;
 @end
@@ -24,6 +25,24 @@ static const NSInteger kSliderMin = 10;
 @implementation TTFSlider
 
 #pragma mark - Private
+
+-(void)updateThumbViewMask{
+    [_thumbViewLayerMask removeFromSuperlayer];
+    
+    /*  More information about masks
+     *  http://evandavis.me/blog/2013/2/13/getting-creative-with-calayer-masks */
+    
+    //  Create a path with a shape of an ellipse
+    CGMutablePathRef path = CGPathCreateMutable();
+    CGPathAddEllipseInRect(path, nil, _thumbView.bounds);
+    
+    //  Create the mask itself and assign the ellipse as mask's shape
+    _thumbViewLayerMask = [CAShapeLayer layer];
+    _thumbViewLayerMask.frame = _thumbView.bounds;
+    _thumbViewLayerMask.path = path;
+    
+    _thumbView.layer.mask = _thumbViewLayerMask;
+}
 
 -(void)handleThumbPanGesture:(UIPanGestureRecognizer *)recognizer{
     if (recognizer.state == UIGestureRecognizerStateBegan){
@@ -42,6 +61,13 @@ static const NSInteger kSliderMin = 10;
         
         //  Setting to zero the translation on the center view (otherwise it breaks)
         [recognizer setTranslation:CGPointMake(0, 0) inView:self];
+        
+        //Getting discrete step
+        float gap = 1.00/(kSliderSteps - 1);
+        _value = (_thumbView.frame.origin.x + kSliderWidth/2) / self.frame.size.width;
+        int discreteValue = ((_value + (gap/2)) / gap);
+        NSString *valueString = [NSString stringWithFormat:@"%i", discreteValue];
+        _thumbLabel.text = valueString;
         
     }else if (recognizer.state == UIGestureRecognizerStateEnded){
         
@@ -63,60 +89,113 @@ static const NSInteger kSliderMin = 10;
                              [_thumbView setFrame:thumbRect];
                          }
                          completion:nil];
-        
 
-        
+        NSString *valueString = [NSString stringWithFormat:@"%i", discreteValue];
+        _thumbLabel.text = valueString;
     }
 }
 
 -(void)setupThumbView{
 
-    //  Init
+    //  Basic Init
     _thumbView = [[UIView alloc] initWithFrame:CGRectZero];
     [_thumbView setTranslatesAutoresizingMaskIntoConstraints:NO];
     [self addSubview:_thumbView];
     
     
     //  Constraints
-    NSLayoutConstraint *centerXConstraint = [NSLayoutConstraint constraintWithItem:_thumbView
-                                                                         attribute:NSLayoutAttributeCenterX
-                                                                         relatedBy:NSLayoutRelationEqual
-                                                                            toItem:self
-                                                                         attribute:NSLayoutAttributeCenterX
-                                                                        multiplier:1.0
-                                                                          constant:0];
+    NSLayoutConstraint *thumbViewCenterXConstraint = [NSLayoutConstraint constraintWithItem:_thumbView
+                                                                                  attribute:NSLayoutAttributeCenterX
+                                                                                  relatedBy:NSLayoutRelationEqual
+                                                                                     toItem:self
+                                                                                  attribute:NSLayoutAttributeCenterX
+                                                                                 multiplier:1.0
+                                                                                   constant:0];
     
-    NSLayoutConstraint *centerYConstraint = [NSLayoutConstraint constraintWithItem:_thumbView
-                                                                         attribute:NSLayoutAttributeCenterY
-                                                                         relatedBy:NSLayoutRelationEqual
-                                                                            toItem:self
-                                                                         attribute:NSLayoutAttributeCenterY
-                                                                        multiplier:1.0
-                                                                          constant:0];
+    NSLayoutConstraint *thumbViewCenterYConstraint = [NSLayoutConstraint constraintWithItem:_thumbView
+                                                                                  attribute:NSLayoutAttributeCenterY
+                                                                                  relatedBy:NSLayoutRelationEqual
+                                                                                     toItem:self
+                                                                                  attribute:NSLayoutAttributeCenterY
+                                                                                 multiplier:1.0
+                                                                                   constant:0];
     
-    NSLayoutConstraint *heightConstraint = [NSLayoutConstraint constraintWithItem:_thumbView
-                                                                        attribute:NSLayoutAttributeHeight
-                                                                        relatedBy:NSLayoutRelationEqual
-                                                                           toItem:nil
-                                                                        attribute:NSLayoutAttributeNotAnAttribute
-                                                                       multiplier:1.0
-                                                                         constant:kSliderHeight];
+    NSLayoutConstraint *thumbViewHeightConstraint = [NSLayoutConstraint constraintWithItem:_thumbView
+                                                                                 attribute:NSLayoutAttributeHeight
+                                                                                 relatedBy:NSLayoutRelationEqual
+                                                                                    toItem:nil
+                                                                                 attribute:NSLayoutAttributeNotAnAttribute
+                                                                                multiplier:1.0
+                                                                                  constant:kSliderHeight];
     
-    NSLayoutConstraint *widthConstraint = [NSLayoutConstraint constraintWithItem:_thumbView
-                                                                       attribute:NSLayoutAttributeWidth
-                                                                       relatedBy:NSLayoutRelationEqual
-                                                                          toItem:nil
-                                                                       attribute:NSLayoutAttributeNotAnAttribute
-                                                                      multiplier:1.0
-                                                                        constant:kSliderWidth];
+    NSLayoutConstraint *thumbViewWidthConstraint = [NSLayoutConstraint constraintWithItem:_thumbView
+                                                                                attribute:NSLayoutAttributeWidth
+                                                                                relatedBy:NSLayoutRelationEqual
+                                                                                   toItem:nil
+                                                                                attribute:NSLayoutAttributeNotAnAttribute
+                                                                               multiplier:1.0
+                                                                                 constant:kSliderWidth];
     
-    NSArray *constraints = @[centerXConstraint, centerYConstraint, heightConstraint, widthConstraint];
-    [self addConstraints:constraints];
+    NSArray *thumbViewConstraints = @[thumbViewCenterXConstraint,
+                                      thumbViewCenterYConstraint,
+                                      thumbViewHeightConstraint,
+                                      thumbViewWidthConstraint];
+    
+    [self addConstraints:thumbViewConstraints];
     
     
     //  Style
     _thumbView.backgroundColor = [UIColor redColor];
     
+    
+    //  Label init
+    _thumbLabel = [[UILabel alloc] initWithFrame:CGRectZero];
+    [_thumbLabel setTranslatesAutoresizingMaskIntoConstraints:NO];
+    [_thumbView addSubview:_thumbLabel];
+    
+    
+    //  Constraints
+    NSLayoutConstraint *topThumbLabelConstraint = [NSLayoutConstraint constraintWithItem:_thumbLabel
+                                                                               attribute:NSLayoutAttributeTop
+                                                                               relatedBy:NSLayoutRelationEqual
+                                                                                  toItem:_thumbView
+                                                                               attribute:NSLayoutAttributeTop
+                                                                              multiplier:1.0
+                                                                                constant:0];
+    
+    NSLayoutConstraint *rightThumbLabelConstraint = [NSLayoutConstraint constraintWithItem:_thumbLabel
+                                                                                 attribute:NSLayoutAttributeRight
+                                                                                 relatedBy:NSLayoutRelationEqual
+                                                                                    toItem:_thumbView
+                                                                                 attribute:NSLayoutAttributeRight
+                                                                                multiplier:1.0
+                                                                                  constant:0];
+    
+    NSLayoutConstraint *bottomThumbLabelConstraint = [NSLayoutConstraint constraintWithItem:_thumbLabel
+                                                                                attribute:NSLayoutAttributeBottom
+                                                                                relatedBy:NSLayoutRelationEqual
+                                                                                   toItem:_thumbView
+                                                                                attribute:NSLayoutAttributeBottom
+                                                                               multiplier:1.0
+                                                                                 constant:0];
+    
+    NSLayoutConstraint *leftThumbLabelConstraint = [NSLayoutConstraint constraintWithItem:_thumbLabel
+                                                                                attribute:NSLayoutAttributeLeft
+                                                                                relatedBy:NSLayoutRelationEqual
+                                                                                   toItem:_thumbView
+                                                                                attribute:NSLayoutAttributeLeft
+                                                                               multiplier:1.0
+                                                                                 constant:0];
+    
+    NSArray *thumbLabelConstraints = @[topThumbLabelConstraint,
+                                       rightThumbLabelConstraint,
+                                       bottomThumbLabelConstraint,
+                                       leftThumbLabelConstraint];
+    
+    [_thumbView addConstraints:thumbLabelConstraints];
+    _thumbLabel.textAlignment = NSTextAlignmentCenter;
+    _thumbLabel.textColor = [UIColor whiteColor];
+    _thumbLabel.font = [UIFont fontWithName:@"HelveticaNeue-Medium" size:18];
     
     //  Gesture handlers
     UIPanGestureRecognizer *thumbPanRecognizer = [[UIPanGestureRecognizer alloc] initWithTarget:self action:@selector(handleThumbPanGesture:)];
@@ -127,6 +206,11 @@ static const NSInteger kSliderMin = 10;
     self.backgroundColor = [UIColor greenColor];
 
     [self setupThumbView];
+}
+
+-(void)layoutSubviews{
+    [super layoutSubviews];
+    [self updateThumbViewMask];
 }
 
 #pragma mark - Public

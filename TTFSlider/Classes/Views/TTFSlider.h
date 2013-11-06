@@ -7,9 +7,13 @@
 //
 
 #import <UIKit/UIKit.h>
+#import <QuartzCore/QuartzCore.h>
 
 @interface TTFSlider : UIView{
     UIView *_thumbView;
+    UILabel *_thumbLabel;
+    
+    CAShapeLayer *_thumbViewLayerMask;
 }
 
 @property (assign) float value;
