@@ -10,6 +10,9 @@
 
 static const NSInteger kSliderHeight = 40;
 static const NSInteger kSliderWidth = 40;
+static const NSInteger kSliderSteps = 5;
+static const NSInteger kSliderMax = 90;
+static const NSInteger kSliderMin = 10;
 
 @interface TTFSlider()
 -(void)setup;
@@ -44,6 +47,25 @@ static const NSInteger kSliderWidth = 40;
         
         //  Calculate the value for the slider, from 0 to 1
         _value = (_thumbView.frame.origin.x + kSliderWidth/2) / self.frame.size.width;
+        
+        //Getting discrete step
+        float gap = 1.00/(kSliderSteps - 1);
+        int discreteValue = ((_value + (gap/2)) / gap);
+        CGRect thumbRect = _thumbView.frame;
+        thumbRect.origin.x = (discreteValue * gap * self.frame.size.width) - kSliderWidth/2;
+        thumbRect.origin.x = MAX(-kSliderWidth/2, thumbRect.origin.x);
+        thumbRect.origin.x = MIN(self.frame.size.width - kSliderWidth/2, thumbRect.origin.x);
+        
+        [UIView animateWithDuration:0.2f
+                              delay:0.0f
+                            options:UIViewAnimationOptionCurveEaseInOut
+                         animations:^{
+                             [_thumbView setFrame:thumbRect];
+                         }
+                         completion:nil];
+        
+
+        
     }
 }
 
