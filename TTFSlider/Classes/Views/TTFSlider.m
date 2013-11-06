@@ -9,8 +9,8 @@
 #import "TTFSlider.h"
 
 static const NSInteger kSliderSteps = 5;
-static const NSInteger kSliderMax = 90;
-static const NSInteger kSliderMin = 10;
+static const float kSliderMax = 100.0;
+static const float kSliderMin = 10.0;
 static const NSInteger kThumbSize = 30;
 
 @interface TTFSlider()
@@ -24,6 +24,35 @@ static const NSInteger kThumbSize = 30;
 @implementation TTFSlider
 
 #pragma mark - Private
+
+- (void)updateThumbLabel {
+    
+    //  Calculate the value for the slider, from 0 to 1
+    _value = (_thumbView.frame.origin.x + kThumbSize/2) / self.frame.size.width;
+    
+    // Getting discrete step
+    float gap = 1.00/(kSliderSteps - 1);
+    int discreteValue = ((_value + (gap/2)) / gap);
+    
+    int thumbRoundedValue = (discreteValue * (kSliderMax - kSliderMin) * gap) + kSliderMin;
+    
+    // Update thumb label
+    NSString *valueString = [NSString stringWithFormat:@"%i", thumbRoundedValue];
+    _thumbLabel.text = valueString;
+    
+}
+
+- (float)calculateAnimationThumbDelta {
+    
+    //  Calculate the value for the slider, from 0 to 1
+    _value = (_thumbView.frame.origin.x + kThumbSize/2) / self.frame.size.width;
+    
+    // Getting discrete step
+    float gap = 1.00/(kSliderSteps - 1);
+    int discreteValue = ((_value + (gap/2)) / gap);
+    
+    return gap * discreteValue;
+}
 
 -(void)updateThumbViewMask{
     [_thumbViewLayerMask removeFromSuperlayer];
@@ -61,23 +90,14 @@ static const NSInteger kThumbSize = 30;
         //  Setting to zero the translation on the center view (otherwise it breaks)
         [recognizer setTranslation:CGPointMake(0, 0) inView:self];
         
-        //Getting discrete step
-        float gap = 1.00/(kSliderSteps - 1);
-        _value = (_thumbView.frame.origin.x + kThumbSize/2) / self.frame.size.width;
-        int discreteValue = ((_value + (gap/2)) / gap);
-        NSString *valueString = [NSString stringWithFormat:@"%i", discreteValue];
-        _thumbLabel.text = valueString;
+        [self updateThumbLabel];
         
     }else if (recognizer.state == UIGestureRecognizerStateEnded){
         
-        //  Calculate the value for the slider, from 0 to 1
-        _value = (_thumbView.frame.origin.x + kThumbSize/2) / self.frame.size.width;
+        float animationDelta = [self calculateAnimationThumbDelta];
         
-        //Getting discrete step
-        float gap = 1.00/(kSliderSteps - 1);
-        int discreteValue = ((_value + (gap/2)) / gap);
         CGRect thumbRect = _thumbView.frame;
-        thumbRect.origin.x = (discreteValue * gap * self.frame.size.width) - kThumbSize/2;
+        thumbRect.origin.x = (animationDelta * self.frame.size.width) - kThumbSize/2;
         thumbRect.origin.x = MAX(-kThumbSize/2, thumbRect.origin.x);
         thumbRect.origin.x = MIN(self.frame.size.width - kThumbSize/2, thumbRect.origin.x);
         
@@ -89,8 +109,6 @@ static const NSInteger kThumbSize = 30;
                          }
                          completion:nil];
 
-        NSString *valueString = [NSString stringWithFormat:@"%i", discreteValue];
-        _thumbLabel.text = valueString;
     }
 }
 
