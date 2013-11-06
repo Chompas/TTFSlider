@@ -10,6 +10,7 @@
 
 @interface TTFSlider : UIView{
     UIView *_thumbView;
+    UILabel *_thumbLabel;
 }
 
 @property (assign) float value;
