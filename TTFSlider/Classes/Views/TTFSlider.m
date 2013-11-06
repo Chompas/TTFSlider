@@ -8,8 +8,8 @@
 
 #import "TTFSlider.h"
 
-static const NSInteger kSliderHeight = 40;
-static const NSInteger kSliderWidth = 40;
+static const NSInteger kSliderHeight = 30;
+static const NSInteger kSliderWidth = 30;
 
 @interface TTFSlider()
 -(void)setup;
@@ -119,7 +119,7 @@ static const NSInteger kSliderWidth = 40;
     
     
     //  Style
-    _thumbView.backgroundColor = [UIColor redColor];
+    _thumbView.backgroundColor = [UIColor colorWithRed:12/255.0 green:99/255.0 blue:121/255.0 alpha:1.0];
     
     
     //  Label init
@@ -169,7 +169,7 @@ static const NSInteger kSliderWidth = 40;
     [_thumbView addConstraints:thumbLabelConstraints];
     _thumbLabel.textAlignment = NSTextAlignmentCenter;
     _thumbLabel.textColor = [UIColor whiteColor];
-    _thumbLabel.font = [UIFont fontWithName:@"HelveticaNeue-Medium" size:18];
+    _thumbLabel.font = [UIFont fontWithName:@"HelveticaNeue-Medium" size:12];
     
     //  Gesture handlers
     UIPanGestureRecognizer *thumbPanRecognizer = [[UIPanGestureRecognizer alloc] initWithTarget:self action:@selector(handleThumbPanGesture:)];
@@ -177,8 +177,8 @@ static const NSInteger kSliderWidth = 40;
 }
 
 -(void)setup{
-    self.backgroundColor = [UIColor greenColor];
-
+    self.backgroundColor = [UIColor colorWithRed:232/255.0 green:232/255.0 blue:232/255.0 alpha:1.0];
+    self.layer.cornerRadius = 4;
     [self setupThumbView];
 }
 

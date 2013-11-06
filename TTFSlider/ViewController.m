@@ -9,7 +9,7 @@
 #import "ViewController.h"
 
 static const NSInteger kSliderWidth = 280;
-static const NSInteger kSliderHeight = 30;
+static const NSInteger kSliderHeight = 9;
 
 @interface ViewController ()
 
