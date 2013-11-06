@@ -14,6 +14,7 @@ static const NSInteger kSliderWidth = 40;
 @interface TTFSlider()
 -(void)setup;
 -(void)setupThumbView;
+-(void)updateThumbViewMask;
 
 -(void)handleThumbPanGesture:(UIPanGestureRecognizer *)recognizer;
 @end
@@ -21,6 +22,24 @@ static const NSInteger kSliderWidth = 40;
 @implementation TTFSlider
 
 #pragma mark - Private
+
+-(void)updateThumbViewMask{
+    [_thumbViewLayerMask removeFromSuperlayer];
+    
+    /*  More information about masks
+     *  http://evandavis.me/blog/2013/2/13/getting-creative-with-calayer-masks */
+    
+    //  Create a path with a shape of an ellipse
+    CGMutablePathRef path = CGPathCreateMutable();
+    CGPathAddEllipseInRect(path, nil, _thumbView.bounds);
+    
+    //  Create the mask itself and assign the ellipse as mask's shape
+    _thumbViewLayerMask = [CAShapeLayer layer];
+    _thumbViewLayerMask.frame = _thumbView.bounds;
+    _thumbViewLayerMask.path = path;
+    
+    _thumbView.layer.mask = _thumbViewLayerMask;
+}
 
 -(void)handleThumbPanGesture:(UIPanGestureRecognizer *)recognizer{
     if (recognizer.state == UIGestureRecognizerStateBegan){
@@ -161,6 +180,11 @@ static const NSInteger kSliderWidth = 40;
     self.backgroundColor = [UIColor greenColor];
 
     [self setupThumbView];
+}
+
+-(void)layoutSubviews{
+    [super layoutSubviews];
+    [self updateThumbViewMask];
 }
 
 #pragma mark - Public
