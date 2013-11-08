@@ -19,7 +19,7 @@
     CAShapeLayer *_thumbViewLayerMask;
 }
 
-@property (assign, nonatomic) float value;
+@property (assign) float value;
 @property (assign) float sliderMaxValue;
 @property (assign) float sliderMinValue;
 @property (assign) int sliderSteps;

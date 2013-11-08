@@ -21,9 +21,9 @@ static const NSInteger kThumbSize = 9;
     [super viewDidLoad];
     
     _slider = [[TTFSlider alloc] initWithFrame:CGRectZero];
-    _slider.sliderMinValue = 0;
-    _slider.sliderMaxValue = 5;
-    _slider.sliderSteps = 6;
+    _slider.sliderMinValue = 4;
+    _slider.sliderMaxValue = 8;
+    _slider.sliderSteps = 5;
     
     [_slider setTranslatesAutoresizingMaskIntoConstraints:NO];
     [self.view addSubview:_slider];
@@ -63,7 +63,7 @@ static const NSInteger kThumbSize = 9;
     NSArray *constraints = @[centerXConstraint, centerYConstraint, widthConstraint, heightConstraint];
     [self.view addConstraints:constraints];
     
-    _slider.value = 3;
+    _slider.value = 4.5;
     
 }
 
