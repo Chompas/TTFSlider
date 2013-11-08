@@ -16,6 +16,7 @@ static const NSInteger kThumbSize = 30;
 -(void)setupThumbView;
 -(void)setupMinView;
 -(void)setupBackgroundView;
+
 -(void)updateThumbViewMask;
 
 -(void)handleThumbPanGesture:(UIPanGestureRecognizer *)recognizer;
@@ -23,15 +24,15 @@ static const NSInteger kThumbSize = 30;
 
 @implementation TTFSlider
 
-@synthesize value = _value;
-
 #pragma mark - Private
 
 -(void)setupBackgroundView{
+    //  Basic Init
     _backgroundView = [[UIView alloc] initWithFrame:CGRectZero];
     [_backgroundView setTranslatesAutoresizingMaskIntoConstraints:NO];
     [self addSubview:_backgroundView];
     
+    //  Constraints
     NSLayoutConstraint *leftConstraint = [NSLayoutConstraint constraintWithItem:_backgroundView
                                                                       attribute:NSLayoutAttributeLeft
                                                                       relatedBy:NSLayoutRelationEqual
@@ -67,70 +68,20 @@ static const NSInteger kThumbSize = 30;
     NSArray *constraints = @[leftConstraint, rightConstraint, topConstraint, bottomConstraint];
     [self addConstraints:constraints];
     
+    //  Style setup
     _backgroundView.backgroundColor = [UIColor colorWithRed:232/255.0 green:232/255.0 blue:232/255.0 alpha:1.0];
     _backgroundView.clipsToBounds = YES;
     _backgroundView.layer.cornerRadius = 4;
 }
 
 -(void)setupMinView{
+    //  Basic init
     _minView = [[UIView alloc] initWithFrame:CGRectZero];
     [_minView setTranslatesAutoresizingMaskIntoConstraints:NO];
     [_backgroundView addSubview:_minView];
     
+    //  Style setup
     _minView.backgroundColor = [UIColor colorWithRed:40/255.0 green:145/255.0 blue:171/255.0 alpha:1.0];
-}
-    
-- (void)updateThumbLabel {
-    
-    //  Calculate the value for the slider, from 0 to 1
-    _value = (_thumbView.frame.origin.x + kThumbSize/2) / self.frame.size.width;
-    
-    if (_sliderSteps > 0) {
-        // Getting discrete step
-        float gap = 1.00/(_sliderSteps - 1);
-        int discreteValue = ((_value + (gap/2)) / gap);
-        
-        int thumbRoundedValue = (discreteValue * (_sliderMaxValue - _sliderMinValue) * gap) + _sliderMinValue;
-        
-        // Update thumb label
-        NSString *valueString = [NSString stringWithFormat:@"%i", thumbRoundedValue];
-        _thumbLabel.text = valueString;
-    } else {
-        NSString *valueString = [NSString stringWithFormat:@"%0.2f", _value];
-        _thumbLabel.text = valueString;
-    }
-}
-
-- (void)updateThumbWithValue:(float)value {
-    
-    NSString *valueString = [NSString stringWithFormat:@"%0.2f", value];
-    _thumbLabel.text = valueString;
-    
-    float delta = (value / (_sliderMaxValue - _sliderMinValue)) * self.frame.size.width;
-    
-    //  Move the thumbView using delta
-    CGRect thumbRect = _thumbView.frame;
-    thumbRect.origin.x = delta-kThumbSize/2;
-    thumbRect.origin.x = MAX(-kThumbSize/2, thumbRect.origin.x);
-    thumbRect.origin.x = MIN(self.frame.size.width - kThumbSize/2, thumbRect.origin.x);
-    _thumbView.frame = thumbRect;
-    
-    // Move the minView just next to the thumb
-    CGRect minViewRect = _backgroundView.frame;
-    minViewRect.origin.x = thumbRect.origin.x - self.frame.size.width + kThumbSize/2;
-    _minView.frame = minViewRect;
-}
-
-- (float)calculateAnimationThumbDelta {
-    
-    //  Calculate the value for the slider, from 0 to 1
-    _value = (_thumbView.frame.origin.x + kThumbSize/2) / self.frame.size.width;
-    
-    // Getting discrete step
-    float gap = 1.00/(_sliderSteps - 1);
-    int discreteValue = ((_value + (gap/2)) / gap);
-    
-    return gap * discreteValue;
 }
 
 -(void)updateThumbViewMask{
@@ -170,34 +121,39 @@ static const NSInteger kThumbSize = 30;
         minViewRect.origin.x = _thumbView.frame.origin.x - self.frame.size.width + kThumbSize/2;
         _minView.frame = minViewRect;
         
+        //  Calculate the value for the slider, from self.minValue to self.maxValue
+        _value = (_thumbView.frame.origin.x + kThumbSize/2) / self.frame.size.width * _sliderMaxValue - _sliderMinValue;
+        _thumbLabel.text = [NSString stringWithFormat:@"%0.2f", _value];
+        
         //  Setting to zero the translation on the center view (otherwise it breaks)
         [recognizer setTranslation:CGPointMake(0, 0) inView:self];
         
-        [self updateThumbLabel];
-        
     }else if (recognizer.state == UIGestureRecognizerStateEnded){
     
-        if (_sliderSteps > 0) {
+//        if (_sliderSteps > 0) {
+//        
+//            //  Rounds to the nearest step
+//            NSInteger step = (NSInteger)roundf(_value) / _sliderSteps;
+//            NSLog(@"#DEBUG %@ %.2f", NSStringFromSelector(_cmd), roundf(step));
         
-            float animationDelta = [self calculateAnimationThumbDelta];
-            
-            CGRect thumbRect = _thumbView.frame;
-            thumbRect.origin.x = (animationDelta * self.frame.size.width) - kThumbSize/2;
-            thumbRect.origin.x = MAX(-kThumbSize/2, thumbRect.origin.x);
-            thumbRect.origin.x = MIN(self.frame.size.width - kThumbSize/2, thumbRect.origin.x);
-            
-            CGRect minViewRect = _minView.frame;
-            minViewRect.origin.x = thumbRect.origin.x - self.frame.size.width + kThumbSize/2;
-            
-            [UIView animateWithDuration:0.2f
-                                  delay:0.0f
-                                options:UIViewAnimationOptionCurveEaseInOut
-                             animations:^{
-                                 [_thumbView setFrame:thumbRect];
-                                 [_minView setFrame:minViewRect];
-                             }
-                             completion:nil];
-        }
+//            
+//            CGRect thumbRect = _thumbView.frame;
+//            thumbRect.origin.x = (animationDelta * self.frame.size.width) - kThumbSize/2;
+//            thumbRect.origin.x = MAX(-kThumbSize/2, thumbRect.origin.x);
+//            thumbRect.origin.x = MIN(self.frame.size.width - kThumbSize/2, thumbRect.origin.x);
+//            
+//            CGRect minViewRect = _minView.frame;
+//            minViewRect.origin.x = thumbRect.origin.x - self.frame.size.width + kThumbSize/2;
+//            
+//            [UIView animateWithDuration:0.2f
+//                                  delay:0.0f
+//                                options:UIViewAnimationOptionCurveEaseInOut
+//                             animations:^{
+//                                 [_thumbView setFrame:thumbRect];
+//                                 [_minView setFrame:minViewRect];
+//                             }
+//                             completion:nil];
+//        }
     }
 }
 
@@ -328,14 +284,22 @@ static const NSInteger kThumbSize = 30;
 
 #pragma mark - Properties
 
-- (float)value {
-    return _value;
-}
-
 - (void)setValue:(float)newValue {
     _value = newValue;
     
-    [self updateThumbWithValue:_value];
+    //  Setup _thumbLabel value
+    NSString *valueString = [NSString stringWithFormat:@"%0.2f", _value];
+    _thumbLabel.text = valueString;
+    
+    //  Setup _thumbView position
+    CGRect thumbRect = _thumbView.frame;
+    thumbRect.origin.x = (_sliderMinValue + _value) * self.frame.size.width / _sliderMaxValue - _thumbView.frame.size.width/2;
+    _thumbView.frame = thumbRect;
+    
+    // Setup _minView position
+    CGRect minViewRect = _backgroundView.frame;
+    minViewRect.origin.x = thumbRect.origin.x - self.frame.size.width + kThumbSize/2;
+    _minView.frame = minViewRect;
 }
 
 #pragma mark - Public
@@ -373,7 +337,7 @@ static const NSInteger kThumbSize = 30;
     [super layoutSubviews];
     [self updateThumbViewMask];
     
-    [self updateThumbWithValue:_value];
+    self.value = _value;
 }
 
 @end

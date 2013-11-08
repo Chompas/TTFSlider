@@ -63,7 +63,7 @@ static const NSInteger kThumbSize = 9;
     NSArray *constraints = @[centerXConstraint, centerYConstraint, widthConstraint, heightConstraint];
     [self.view addConstraints:constraints];
     
-    _slider.value = 4.5;
+    _slider.value = 3;
     
 }
 
